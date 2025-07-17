@@ -6,95 +6,76 @@ def inputNumEnh():
     found_operator = ''
     operator_index = -1
 
-    # 연산자를 찾는 핵심 로직: 가장 먼저 발견되는 유효한 연산자를 찾습니다.
-    # 단, 첫 번째 '-'는 피연산자의 부호일 수 있으므로 특별히 처리합니다.
+    # 가장 왼쪽부터 유효한 연산자를 찾습니다.
+    # 이때, 음수 부호('-')와의 충돌을 해결하는 것이 핵심입니다.
+    # '2 * -2' 와 같은 경우를 처리하기 위해, 연산자 뒤에 오는 '-'는 다음 숫자의 부호로 간주합니다.
     
-    # 덧셈, 뺄셈, 곱셈, 나눗셈 연산자를 순서대로 확인 (우선순위 고려 아님, 단순 탐색 순서)
-    # 실제로는 곱셈/나눗셈을 먼저 찾는 것이 더 안정적일 수 있습니다.
-    # 예를 들어, "5+2*3" 같은 복잡한 수식이 아니라, "A op B" 형태만 다룹니다.
+    # 팁: 연산자 우선순위를 역순으로 찾아 가장 큰 범위의 연산자를 찾는 방법도 있지만,
+    # 여기서는 'A op B' 형태에서 가장 먼저 나오는 '유효한' 연산자를 찾습니다.
+    # 즉, 뺄셈(-) 연산자가 첫 번째 피연산자의 음수 부호와 겹치지 않도록 주의합니다.
     
-    # 특정 연산자가 표현식 내에서 몇 번째 인덱스에 있는지 확인하고,
-    # 해당 연산자 앞뒤의 문자열이 유효한 숫자인지 검증하는 방식으로 접근합니다.
-
-    # 1. 연산자의 가능한 인덱스 찾기
-    possible_operator_indices = []
     for i, char in enumerate(expression):
+        # 첫 번째 문자가 '-'이고 연산자가 아님을 보장합니다.
+        # 즉, '-5+3'에서 첫 번째 '-'는 5의 부호입니다.
+        if i == 0 and char == '-':
+            continue # 첫 번째 문자가 '-'이면 건너뛰고 다음 문자부터 탐색
+
         if char in operators:
-            # 첫 번째 문자가 '-'인 경우는 일단 후보에서 제외 (음수 부호일 가능성)
-            if i == 0 and char == '-':
-                continue
+            # 연산자 뒤에 아무것도 없으면 오류
+            if i == len(expression) - 1:
+                print("Invalid expression format. Please use 'number operator number'.")
+                exit()
             
-            # 연산자 뒤에 숫자가 와야 함.
-            # 연산자 뒤에 '-'가 오는 경우 (예: '2 * -2')를 처리
-            if i + 1 < len(expression) and expression[i+1] == '-':
-                # '-X'가 아닌 다른 연산자 뒤에 오는 '-'는 두 번째 피연산자의 부호일 수 있음
-                if i + 2 < len(expression) and expression[i+2].isdigit():
-                    possible_operator_indices.append(i)
-                else: # '-X'가 숫자가 아니거나, 끝에 '-'만 있는 경우 오류
-                    continue # 이 연산자 인덱스는 유효하지 않음
-            elif i + 1 < len(expression) and expression[i+1] in operators: # 연산자 중복 '++'
-                continue # 이 연산자 인덱스는 유효하지 않음
-            elif i == len(expression) - 1: # 연산자가 문자열 끝에 있음
-                continue # 이 연산자 인덱스는 유효하지 않음
-            else: # 일반적인 유효한 연산자
-                possible_operator_indices.append(i)
-
-    # 2. 가능한 연산자 인덱스 중에서 가장 적합한 것 선택
-    # 여기서는 가장 첫 번째로 발견된 유효한 연산자를 선택합니다.
-    if not possible_operator_indices:
-        print("Invalid expression format. Please use 'number operator number'.")
-        exit()
-    
-    # 이제 모든 가능한 연산자 인덱스를 확인하면서 유효한 파싱 조합을 찾습니다.
-    # 첫 번째 유효한 조합을 사용합니다.
-    for p_idx in possible_operator_indices:
-        temp_operator_char = expression[p_idx]
-        temp_left_str = expression[:p_idx]
-        temp_right_str = expression[p_idx + 1:]
-
-        # 피연산자가 유효한 숫자인지 확인하는 헬퍼 함수
-        def _is_valid_number_string(s: str) -> bool:
-            if not s:
-                return False
+            # '2 * -2'처럼 연산자 뒤에 '-'가 오는 경우를 처리
+            # char는 연산자, expression[i+1]은 다음 문자
+            if expression[i+1] == '-':
+                # 만약 그 다음 문자가 숫자가 아니면 (예: '5*-', '5*--'), 이는 유효하지 않음
+                if i + 2 >= len(expression) or not expression[i+2].isdigit():
+                    print("Invalid expression format. Number expected after operator and sign.")
+                    exit()
+                # 유효한 형태라면 (예: '*-5'), 이 연산자 위치를 사용합니다.
+                found_operator = char
+                operator_index = i
+                break # 유효한 연산자 찾았으니 종료
             
-            if s.startswith('-'):
-                s = s[1:]
-                if not s: 
-                    return False
-
-            parts = s.split('.')
-            if len(parts) > 2: 
-                return False
+            # '1++2'처럼 연산자 뒤에 또 다른 연산자가 오는 경우 (단, 다음이 '-'가 아닌 경우)
+            elif expression[i+1] in operators:
+                print("Invalid expression format. Multiple operators in sequence.")
+                exit()
             
-            # ".5", "5." 같은 경우 처리, "."만 있는 경우는 제외
-            if len(parts) == 1: 
-                return parts[0].isdigit()
-            elif len(parts) == 2: 
-                if not parts[0] and not parts[1]: 
-                    return False
-                return (parts[0].isdigit() or parts[0] == '') and \
-                       (parts[1].isdigit() or parts[1] == '')
-            return False 
+            # 위 예외들에 해당하지 않는 일반적인 유효한 연산자를 찾은 경우
+            else:
+                found_operator = char
+                operator_index = i
+                break # 유효한 연산자 찾았으니 종료
 
-        if _is_valid_number_string(temp_left_str) and _is_valid_number_string(temp_right_str):
-            found_operator = temp_operator_char
-            operator_index = p_idx
-            break # 유효한 연산자를 찾았으므로 루프 종료
-
-    if operator_index == -1: # 적합한 연산자를 찾지 못하면
-        print("Invalid expression format. Please use 'number operator number'.")
+    # 연산자를 찾지 못했다면 오류
+    if operator_index == -1:
+        print("Invalid expression format. No valid operator found.")
         exit()
 
     left_str = expression[:operator_index]
     right_str = expression[operator_index + 1:]
 
+    # float() 변환을 시도하고 실패하면 오류 처리
     try:
         left = int(float(left_str))
         right = int(float(right_str))
     except ValueError:
-        print("Invalid number input after parsing.")
+        # float() 변환 실패는 숫자가 아니거나 형식이 잘못된 경우
+        print("Invalid number format in expression.")
+        exit()
+    
+    # left_str 이나 right_str 이 빈 문자열인 경우 float() 변환에서 ValueError 발생
+    # 예를 들어, "+5", "-5" 같은 입력은 left_str이 빈 문자열이 될 수 있음.
+    # float('')는 ValueError 발생시키므로, try-except로 처리됩니다.
+    # 하지만 첫 번째 피연산자가 빈 문자열인 경우를 명시적으로 막는 것이 더 명확합니다.
+    if not left_str or not right_str:
+        print("Invalid expression format. Operands cannot be empty.")
         exit()
 
+
+    # 연산자 인덱스 찾기
     operator_idx = operators.index(found_operator)
     
     return left, right, operator_idx
