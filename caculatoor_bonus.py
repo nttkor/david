@@ -2,7 +2,7 @@ def inputNumEnh():
     expression = input("Enter expression: ").replace(" ", "")  # 공백 제거
 
     operators = ['+', '-', '*', '/'] 
-    
+    numbers = ['0','1','2','3','4','5','6','7','8','9']
     found_operator = ''
     operator_index = -1
 
@@ -25,6 +25,8 @@ def inputNumEnh():
         print("Invalid expression format. Please use 'number operator number'.")
         exit()
     for i, char in enumerate(checkexpression):
+        if char in numbers:
+            continue
         if char in operators:
             if i==0:
                 print("Invalid expression format. Please use 'number operator number'.")
@@ -35,6 +37,8 @@ def inputNumEnh():
                 break
             else:
                 break 
+        else:
+            break
 
     if operator_index == -1:
         print("Invalid operator.")
