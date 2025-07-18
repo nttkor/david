@@ -13,71 +13,38 @@ def inputNumEnh():
     # 팁: 연산자 우선순위를 역순으로 찾아 가장 큰 범위의 연산자를 찾는 방법도 있지만,
     # 여기서는 'A op B' 형태에서 가장 먼저 나오는 '유효한' 연산자를 찾습니다.
     # 즉, 뺄셈(-) 연산자가 첫 번째 피연산자의 음수 부호와 겹치지 않도록 주의합니다.
-    
-    for i, char in enumerate(expression):
-        # 첫 번째 문자가 '-'이고 연산자가 아님을 보장합니다.
-        # 즉, '-5+3'에서 첫 번째 '-'는 5의 부호입니다.
-        if i == 0 and char == '-':
-            continue # 첫 번째 문자가 '-'이면 건너뛰고 다음 문자부터 탐색
-
+    checkexpression = expression
+    minus = False
+    if expression[0] == '-':
+        checkexpression = expression[1:]
+        minus = True
+        
+    for i, char in enumerate(checkexpression):
         if char in operators:
-            # 연산자 뒤에 아무것도 없으면 오류
-            if i == len(expression) - 1:
-                print("Invalid expression format. Please use 'number operator number'.")
-                exit()
-            
-            # '2 * -2'처럼 연산자 뒤에 '-'가 오는 경우를 처리
-            # char는 연산자, expression[i+1]은 다음 문자
-            if expression[i+1] == '-':
-                # 만약 그 다음 문자가 숫자가 아니면 (예: '5*-', '5*--'), 이는 유효하지 않음
-                if i + 2 >= len(expression) or not expression[i+2].isdigit():
-                    print("Invalid expression format. Number expected after operator and sign.")
-                    exit()
-                # 유효한 형태라면 (예: '*-5'), 이 연산자 위치를 사용합니다.
-                found_operator = char
-                operator_index = i
-                break # 유효한 연산자 찾았으니 종료
-            
-            # '1++2'처럼 연산자 뒤에 또 다른 연산자가 오는 경우 (단, 다음이 '-'가 아닌 경우)
-            elif expression[i+1] in operators:
-                print("Invalid expression format. Multiple operators in sequence.")
-                exit()
-            
-            # 위 예외들에 해당하지 않는 일반적인 유효한 연산자를 찾은 경우
-            else:
-                found_operator = char
-                operator_index = i
-                break # 유효한 연산자 찾았으니 종료
-
-    # 연산자를 찾지 못했다면 오류
+            found_operator = char
+            operator_index = i
+            break
     if operator_index == -1:
-        print("Invalid expression format. No valid operator found.")
-        exit()
-
-    left_str = expression[:operator_index]
-    right_str = expression[operator_index + 1:]
-
-    # float() 변환을 시도하고 실패하면 오류 처리
+        print("Invalid expression format. Please use 'number operator number'.")
+        exit() 
+    # 연산자 앞뒤로 숫자를 분리합니다.
+    left = checkexpression[:operator_index] 
+    if minus:
+        left = '-' + left  # 음수 부호를 복원합니다.
+    right = checkexpression[operator_index + 1:]
+    if not left or not right:
+        print("Invalid expression format. Please use 'number operator number'.")
+        exit() 
+    # 숫자 변환 시도
     try:
-        left = int(float(left_str))
-        right = int(float(right_str))
+        left = int(float(left))
+        right = int(float(right))   
     except ValueError:
-        # float() 변환 실패는 숫자가 아니거나 형식이 잘못된 경우
-        print("Invalid number format in expression.")
-        exit()
-    
-    # left_str 이나 right_str 이 빈 문자열인 경우 float() 변환에서 ValueError 발생
-    # 예를 들어, "+5", "-5" 같은 입력은 left_str이 빈 문자열이 될 수 있음.
-    # float('')는 ValueError 발생시키므로, try-except로 처리됩니다.
-    # 하지만 첫 번째 피연산자가 빈 문자열인 경우를 명시적으로 막는 것이 더 명확합니다.
-    if not left_str or not right_str:
-        print("Invalid expression format. Operands cannot be empty.")
-        exit()
-
+        print("Invalid number input.")
+        exit()  
 
     # 연산자 인덱스 찾기
     operator_idx = operators.index(found_operator)
-    
     return left, right, operator_idx
 
 # 연산함수  

@@ -6,6 +6,7 @@ def inputNumEnh():
     expression = input("Enter expression: ").replace(" ", "")  # 공백 제거
 
     # 정규표현식으로 수식에서 두 숫자와 연산자 추출
+    #^(-?\d+\.?\d*)(([\+\-\*/])(-?\d+\.?\d*))*$
     match = re.match(r'^(-?\d+\.?\d*)([\+\-\*/])(-?\d+\.?\d*)$', expression)
     if not match:
         print("Invalid expression format. Please use 'number operator number'.")
