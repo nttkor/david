@@ -11,6 +11,10 @@ def inputNum():
 # 오퍼레이터를 입력받는 함수
 def inputOperator()->int:
     buffer = input("Enter Operator(+, -, *, /): ")
+    buffer = buffer.replace(" ","")
+    if len(buffer) > 1:
+        print("Invalid operator." )
+        exit()
     for idx in range(4):
         if buffer[0] == operators[idx]:
             return idx
@@ -26,7 +30,7 @@ def multiply(a, b):
     return a*b
 def divide(a, b):
     if(b != 0):
-        return a/b
+        return int(a/b)
     else:
         print("Error: Division by zero." )
         exit()

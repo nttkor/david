@@ -15,17 +15,29 @@ def inputNumEnh():
     # 즉, 뺄셈(-) 연산자가 첫 번째 피연산자의 음수 부호와 겹치지 않도록 주의합니다.
     checkexpression = expression
     minus = False
+    if len(expression) == 0:
+        print("Invalid expression format. Please use 'number operator number'.")
+        exit()
     if expression[0] == '-':
         checkexpression = expression[1:]
         minus = True
-        
+    if len(checkexpression) == 0:
+        print("Invalid expression format. Please use 'number operator number'.")
+        exit()
     for i, char in enumerate(checkexpression):
         if char in operators:
-            found_operator = char
-            operator_index = i
-            break
+            if i==0:
+                print("Invalid expression format. Please use 'number operator number'.")
+                exit()
+            if len(checkexpression) > i+1 and not checkexpression[i+1] in '+*/':
+                found_operator = char
+                operator_index = i
+                break
+            else:
+                break 
+
     if operator_index == -1:
-        print("Invalid expression format. Please use 'number operator number'.")
+        print("Invalid operator.")
         exit() 
     # 연산자 앞뒤로 숫자를 분리합니다.
     left = checkexpression[:operator_index] 
@@ -56,7 +68,7 @@ def multiply(a, b):
     return a*b
 def divide(a, b):
     if(b != 0):
-        return a/b
+        return int(a/b)
     else:
         print("Error: Division by zero." )
         exit()
