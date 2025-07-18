@@ -31,7 +31,7 @@ def inputNumEnh():
             if i==0:
                 print("Invalid expression format. Please use 'number operator number'.")
                 exit()
-            if len(checkexpression) > i+1 and not checkexpression[i+1] in '+*/':
+            if len(checkexpression) > i+1 and not checkexpression[i+1] in '+*/' and checkexpression[i+1] in '0123456789':
                 found_operator = char
                 operator_index = i
                 break
