@@ -1,4 +1,0 @@
-README.md
-app.py
-ls.txt
-templates
