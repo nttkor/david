@@ -7,6 +7,7 @@ def index():
     return '<a href="/menu">메뉴로 이동</a>'
 
 @app.route('/menu')
+def menu():
 
 
 if __name__ == '__main__':
