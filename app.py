@@ -6,6 +6,7 @@ app = Flask(__name__)
 def index():
     return '<a href="/menu">메뉴로 이동</a>'
 
+@app.route('/menu')
 
 
 if __name__ == '__main__':
