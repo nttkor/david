@@ -24,10 +24,6 @@ def home():
     # index.html 템플릿을 렌더링하면서, computername 변수에 hostname 값을 전달
     return render_template("index.html", computername=hostname)
 
-@app.route("/test1")
-def test1():
-    return render_template('test1.html')
-
 @app.route("/test2")
 def test2():
     return render_template('test2.html')
