@@ -27,10 +27,6 @@ def home():
 @app.route("/test1")
 def test1():
     return render_template('test1.html')
-
-@app.route("/test2")
-def test2():
-    return render_template('test2.html')
     
 # 앱 실행 (debug 모드를 True로 설정하여 개발 중 디버깅 가능하게 함)
 if __name__ == "__main__":
