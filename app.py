@@ -24,14 +24,6 @@ def home():
     # index.html 템플릿을 렌더링하면서, computername 변수에 hostname 값을 전달
     return render_template("index.html", computername=hostname)
 
-@app.route("/test2")
-def test2():
-    return render_template('test2.html')
-    
-@app.route("/test1")
-def test1():
-    return render_template('test1.html')
-
 # 앱 실행 (debug 모드를 True로 설정하여 개발 중 디버깅 가능하게 함)
 if __name__ == "__main__":
     app.run(port=8080, debug=True)  #debug=True or False 지정가능 CLI에서 python -O app.py로도 debug off 가능
