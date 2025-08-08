@@ -13,8 +13,28 @@ gTTS(text, "com", lang).write_to_fp(fp)
 encoded_audio_data = base64.b64encode(fp.getvalue())
 david.jpg 파일을 이미지로 삽입한다.
 ```
+### Image
 <font size="5"> 코디세이 </font>  
 [![코디세이](logo_white.png)](https://usr.codyssey.kr/)
+
+
+## Lists
+
+You can make an unordered list by preceding one or more lines of text with -, *, or +.
+
+- George Washington
+* John Adams
++ Thomas Jefferson
+
+
+### Task lists
+
+To create a task list, preface list items with a hyphen and space followed by [ ]. To mark a task as complete, use [x].
+
+- [x] #739
+- [ ] https://github.com/octo-org/octo-repo/issues/740
+- [ ] Add delight to the experience when all tasks are complete :tada:
+
 
 ### Using emojis
 
