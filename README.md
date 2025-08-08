@@ -16,6 +16,12 @@ david.jpg 파일을 이미지로 삽입한다.
 <font size="5"> 코디세이 </font>  
 [![코디세이](logo_white.png)](https://usr.codyssey.kr/)
 
+### Using emojis
+
+You can add emoji to your writing by typing :EMOJICODE:, a colon followed by the name of the emoji.
+
+@octocat :+1: This PR looks great - it's ready to merge! :shipit:
+
 ### foot note  
 Here is a simple footnote[^1].
 
